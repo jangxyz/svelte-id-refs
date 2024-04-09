@@ -2,15 +2,23 @@ import { getContext, setContext } from 'svelte';
 
 /**
  * @typedef {Partial<{ suffix: number }>} IdRefsOptions;
- * @typedef {}ReturnType<typeof createIdRefsContext>} IdRefs;
+ * @typedef {ReturnType<typeof createIdRefsContext>} IdRefs;
  */
 
+const contextName = 'idRefs';
+
 /**
+ * Create a new idRefs context.
  *
  * @param {IdRefsOptions} options
  * @returns
  */
 export function createIdRefsContext(options = { suffix: 3 }) {
+  // make sure we are not creating another context
+  if (getContext(contextName)) {
+    throw new Error('trying to create another idRefs context.');
+  }
+
   const idMap = new Map();
 
   /**
@@ -48,7 +56,7 @@ export function createIdRefsContext(options = { suffix: 3 }) {
     return id;
   }
 
-  return {
+  const idRefs = {
     /** Build unique id within this context. */
     newId,
 
@@ -90,6 +98,22 @@ export function createIdRefsContext(options = { suffix: 3 }) {
       return idMap.get(key);
     },
   };
+
+  setContext(contextName, idRefs);
+
+  return idRefs;
+}
+
+export function useIdRefs() {
+  /** @type {IdRefs} */
+  const idRefs = getContext(contextName);
+  if (!idRefs) {
+    throw new Error(
+      'No previously declared idRefs. Maybe you forgot to do `createIdRefsContext`?',
+    );
+  }
+
+  return idRefs;
 }
 
 /**
