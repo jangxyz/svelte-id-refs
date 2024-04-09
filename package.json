@@ -1,11 +1,13 @@
 {
   "name": "@jangxyz/svelte-id-refs",
-  "description": "Manage page-aware id context in Svelte",
-  "author": {
-    "name": "Kim, Jang-hwan",
-    "email": "janghwan@gmail.com"
-  },
-  "version": "0.0.1",
+  "description": "Manage page-level id uniqueness in Svelte components",
+  "keywords": [
+    "svelte",
+    "id"
+  ],
+  "repository": "https://github.com/jangxyz/svelte-id-refs",
+  "author": "Kim, Jang-hwan <janghwan@gmail.com>",
+  "version": "0.0.2",
   "scripts": {
     "dev": "dotenv -c -- bash -c 'npx vite dev --port ${PORT:-5173}'",
     "build": "vite build && npm run package",
