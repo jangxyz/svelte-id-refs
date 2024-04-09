@@ -11,7 +11,6 @@ const contextName = 'idRefs';
  * Create a new idRefs context.
  *
  * @param {IdRefsOptions} options
- * @returns
  */
 export function createIdRefsContext(options = { suffix: 3 }) {
   // make sure we are not creating another context
@@ -19,68 +18,65 @@ export function createIdRefsContext(options = { suffix: 3 }) {
     throw new Error('trying to create another idRefs context.');
   }
 
+  /** @type {Map<string, Set<string>>} */
   const idMap = new Map();
 
   /**
+   * @param {string} key
+   * @param {number} length
+   */
+  function findUniqueId(key, length) {
+    let id = buildRandomId(key, length);
+    let existingIds = idMap.get(id);
+    while (existingIds) {
+      for (let i = 0; i < 10; i++) {
+        id = buildRandomId(key, length);
+        existingIds = idMap.get(id);
+        if (!existingIds) return id;
+      }
+
+      // retry with longer length, forever.
+      length += 1;
+    }
+    return id;
+  }
+
+  /**
+   * Build unique id within this context.
+   *
    * @param {string} key
    */
   function newId(key) {
     let length = options?.suffix ?? 3;
 
-    /**
-     * @param {string} key
-     * @param {number} length
-     */
-    function buildRandomId(key, length) {
-      return `${key}-${randomId(length)}`;
+    const id = findUniqueId(key, length);
+
+    if (!idMap.has(key)) {
+      idMap.set(key, new Set());
     }
+    idMap.get(key).add(id);
 
-    const id = (() => {
-      let id = buildRandomId(key, length);
-      let existing = idMap.get(id);
-      while (existing) {
-        for (let i = 0; i < 10; i++) {
-          id = buildRandomId(key, length);
-          existing = idMap.get(id);
-          if (!existing) return id;
-        }
-
-        // retry with longer length, forever.
-        length += 1;
-      }
-      return id;
-    })();
-
-    idMap.set(key, id);
-
+    console.log('new id:', id, { key }, '=>', idMap.size);
     return id;
   }
 
+  /**
+   * Retrieve id for this key.
+   *
+   * @param {string} key
+   */
+  function getIdsByKey(key) {
+    const ids = idMap.get(key);
+    if (!ids) {
+      console.error('id not found for key:', key);
+      throw new Error('id not found');
+    }
+    return ids;
+  }
+
   const idRefs = {
-    /** Build unique id within this context. */
     newId,
-
-    //unique(key: string) {
-    //  const existing = idMap.get(key);
-    //  if (existing) {
-    //    console.error('id already exists for key:', key);
-    //    throw new Error('duplicate id');
-    //  }
-    //  return key;
-    //},
-
-    /**
-     * Retrieve id for this key.
-     *
-     * @param {string} key
-     */
-    getId(key) {
-      if (!idMap.get(key)) {
-        console.error('id not found for key:', key);
-        throw new Error('id not found');
-      }
-      return key;
-    },
+    getId: getIdsByKey,
 
     /**
      * Get, or create new id for this key.
@@ -91,10 +87,8 @@ export function createIdRefsContext(options = { suffix: 3 }) {
      */
     getOrCreate(key) {
       if (!idMap.get(key)) {
-        console.log(1);
         return newId(key);
       }
-      console.log(2);
       return idMap.get(key);
     },
   };
@@ -114,6 +108,14 @@ export function useIdRefs() {
   }
 
   return idRefs;
+}
+
+/**
+ * @param {string} prefix
+ * @param {number} length
+ */
+function buildRandomId(prefix, length) {
+  return `${prefix}-${randomId(length)}`;
 }
 
 /**

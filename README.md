@@ -1,58 +1,97 @@
-# create-svelte
+# Id Refs Svelte
 
-Everything you need to build a Svelte library, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+Manage reusable id attributes, in Svelte.
 
-Read more about creating a library [in the docs](https://kit.svelte.dev/docs/packaging).
+## Why?
 
-## Creating a project
+Id attributes should be unique in a DOM tree. That's why we have `getElementById()` method, opposed to `getElementsByClass()`.
 
-If you're seeing this, you've probably already done this step. Congrats!
+However, as component-based web development prevail, components started to focus on 'reusability', which conflicts with the idea of "allowing an attribute to be used only once throughout the entire page". This can be a problem when we are building components, because we do not know in advance whether it will be used only once or multiple times, perhaps even in the future.
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+We cannot ditch using `id`s all together, because that's not how the web works. Rather, the number of attributes that depends on the id attribute keeps on growing, starting from `for` in `<label>` tags and others like `aria-labelledby`. Deciding not to use `id` is like deciding not to use some aspects of what the web as a platform is providing.
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+This package resolves this problem by 
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Install
 
 ```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+npm install @jangxyz/id-refs-svelte
 ```
 
-Everything inside `src/lib` is part of your library, everything inside `src/routes` can be used as a showcase or preview app.
 
-## Building
+## Usage
 
-To build your library:
+### Usage 1
 
-```bash
-npm run package
+`idRefs`
+
+```svelte
+<script>
+	import { createIdRefsContext } from '$lib/idRefs.js';
+
+  let name = '';
+
+	const idRefs = createIdRefsContext({ suffix: 3 });
+  const nameId = idRefs.newId('name');
+  const emailId = idRefs.newId('email');
+</script>
+
+<label for={nameId}>Name:</label>
+<input id={nameId} type="text" bind:value={name} />
+
+<label for={emailId}>E-mail:</label>
+<input id={emailId} type="email" bind:value={email} />
+
 ```
 
-To create a production version of your showcase app:
 
-```bash
-npm run build
+### Usage 2
+
+You create a single idRef context in `+page.svelte`.
+The context keeps unique id values.
+
+```svelte
+<!-- +page.svelte -->
+<script>
+	import { createIdRefsContext } from '$lib/idRefs.js';
+	import Card from './Card.svelte';
+
+	createIdRefsContext({ suffix: 3 });
+</script>
+
+<Card name="user1" />
+<Card name="user2" />
 ```
 
-You can preview the production build with `npm run preview`.
+Inside each component, you call the idRef context with `useIdRefs()`, and use the helper methods to ensure unique id names.
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+```svelte
+<!-- Card.svelte -->
+<script>
+	import { useIdRefs } from '$lib/idRefs.js';
+	import WithId from '$lib/WithId.svelte';
 
-## Publishing
+	const idRefs = useIdRefs();
 
-Go into the `package.json` and give your package the desired name through the `"name"` option. Also consider adding a `"license"` field and point it to a `LICENSE` file which you can create from a template (one popular option is the [MIT license](https://opensource.org/license/mit/)).
+	export let name;
+</script>
 
-To publish your library to [npm](https://www.npmjs.com):
+<fieldset>
+	<legend>Card</legend>
 
-```bash
-npm publish
+	<div class="grid">
+		<WithId idKey="name" {idRefs} let:id={nameId}>
+			<label for={nameId} title="id={nameId}">Name</label>
+			<input id={nameId} name="name" value={name} />
+		</WithId>
+
+		<WithId idKey="email" {idRefs} let:id={emailId}>
+			<label for={emailId} title="id={emailId}">Email</label>
+			<input id={emailId} name="email" />
+		</WithId>
+	</div>
+</fieldset>
 ```
+
+For convenience, `idRefs` prop in `WithId` can be omitted, which will call `useIdRefs()` internally.
+
