@@ -1,3 +1,10 @@
-<h1>Welcome to your library project</h1>
-<p>Create your package using @sveltejs/package and preview/showcase your work with SvelteKit</p>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script>
+	import { createIdRefsContext } from '$lib/idRefs.js';
+	import Card from './Card.svelte';
+	import WithId from '$lib/WithId.svelte';
+
+	const idRefs = createIdRefsContext({ suffix: 3 });
+</script>
+
+<Card name="user1" />
+<Card name="user2" />
