@@ -1,5 +1,5 @@
 {
-  "name": "svelte-id-refs",
+  "name": "@jangxyz/svelte-id-refs",
   "description": "Manage page-aware id context in Svelte",
   "author": {
     "name": "Kim, Jang-hwan",
