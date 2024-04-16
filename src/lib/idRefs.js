@@ -56,7 +56,6 @@ export function createIdRefsContext(options = { suffix: 3 }) {
     }
     idMap.get(key).add(id);
 
-    console.log('new id:', id, { key }, '=>', idMap.size);
     return id;
   }
 
