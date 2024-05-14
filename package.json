@@ -7,7 +7,7 @@
   ],
   "repository": "https://github.com/jangxyz/svelte-id-refs",
   "author": "Kim, Jang-hwan <janghwan@gmail.com>",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "scripts": {
     "dev": "dotenv -c -- bash -c 'npx vite dev --port ${PORT:-5173}'",
     "build": "vite build && npm run package",
@@ -31,7 +31,7 @@
     "!dist/**/*.spec.*"
   ],
   "peerDependencies": {
-    "svelte": "^4.0.0"
+    "svelte": "^4.0.0 || ^5.0.0"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.0.0",
