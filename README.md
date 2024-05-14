@@ -89,15 +89,15 @@ There is a helper component `<WithId>` that wraps the `idRefs.newId()` invocatio
   <legend>Card</legend>
 
   <div class="grid">
-  	<WithId idKey="name" {idRefs} let:id={nameId}>
-  		<label for={nameId} title="id={nameId}">Name</label>
-  		<input id={nameId} name="name" value={name} />
-  	</WithId>
+    <WithId idKey="name" {idRefs} let:id={nameId}>
+      <label for={nameId} title="id={nameId}">Name</label>
+      <input id={nameId} name="name" value={name} />
+    </WithId>
 
-  	<WithId idKey="email" let:id={emailId}>
-  		<label for={emailId} title="id={emailId}">Email</label>
-  		<input id={emailId} name="email" />
-  	</WithId>
+    <WithId idKey="email" let:id={emailId}>
+      <label for={emailId} title="id={emailId}">Email</label>
+      <input id={emailId} name="email" />
+    </WithId>
   </div>
 </fieldset>
 ```
