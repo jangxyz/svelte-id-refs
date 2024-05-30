@@ -37,7 +37,7 @@ npm install @jangxyz/id-refs-svelte
 
 ```svelte
 <script>
-  import { createIdRefsContext } from '$lib/idRefs.js'
+  import { createIdRefsContext } from '@jangxyz/svelte-id-refs'
 
   let name = ''
 
@@ -60,7 +60,7 @@ npm install @jangxyz/id-refs-svelte
 ```svelte
 <!-- +page.svelte -->
 <script>
-  import { createIdRefsContext } from '$lib/idRefs.js'
+  import { createIdRefsContext } from '@jangxyz/svelte-id-refs'
   import Card from './Card.svelte'
 
   createIdRefsContext({ suffix: 3 })
@@ -77,8 +77,7 @@ There is a helper component `<WithId>` that wraps the `idRefs.newId()` invocatio
 ```svelte
 <!-- Card.svelte -->
 <script>
-  import { useIdRefs } from '$lib/idRefs.js'
-  import WithId from '$lib/WithId.svelte'
+  import { useIdRefs, WithId } from '@jangxyz/svelte-id-refs'
 
   const idRefs = useIdRefs()
 
